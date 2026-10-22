@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz & Performance Analyzer</title>
+
+    <style>
+
+        /* =================================================
+           GENERAL
+        ================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+
+        /* =================================================
+           HEADER
+        ================================================= */
+
+        .header {
+            width: 100%;
+            min-height: 70px;
+
+            background: #1e3a8a;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 15px 8%;
+
+            color: white;
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #60a5fa;
+        }
+
+        .header nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .header nav a:hover {
+            color: #93c5fd;
+        }
+
+
+        /* =================================================
+           PAGE
+        ================================================= */
+
+        .page {
+            min-height: calc(100vh - 70px);
+
+            padding: 60px 8%;
+
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+
+        /* =================================================
+           HOME
+        ================================================= */
+
+        .welcome-box {
+            max-width: 900px;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        .welcome-box h1 {
+            font-size: 42px;
+            color: #1e3a8a;
+            margin-bottom: 15px;
+        }
+
+        .welcome-box > p {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+
+
+        /* =================================================
+           STUDENT FORM
+        ================================================= */
+
+        .student-form {
+            max-width: 500px;
+
+            margin: auto;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 15px;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .student-form h2 {
+            margin-bottom: 25px;
+            color: #1e3a8a;
+        }
+
+        .student-form input,
+        .student-form select {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.3s;
+        }
+
+        .student-form input:focus,
+        .student-form select:focus {
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+
+        /* =================================================
+           BUTTON
+        ================================================= */
+
+        button {
+
+            border: none;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 13px 24px;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        button:hover {
+
+            background: #1d4ed8;
+
+            transform: translateY(-2px);
+        }
+
+        button:active {
+
+            transform: translateY(0);
+        }
+
+
+        /* =================================================
+           QUIZ
+        ================================================= */
+
+        .quiz-container {
+
+            max-width: 850px;
+
+            margin: auto;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* QUIZ HEADER */
+
+        .quiz-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .quiz-header h2 {
+
+            color: #1e3a8a;
+        }
+
+
+        /* TIMER */
+
+        .timer {
+
+            background: #fee2e2;
+
+            color: #dc2626;
+
+            padding: 10px 18px;
+
+            border-radius: 20px;
+
+            font-weight: bold;
+        }
+
+
+        /* QUESTION INFO */
+
+        .question-info {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* QUESTION */
+
+        .question-box {
+
+            background: #eff6ff;
+
+            padding: 25px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+        }
+
+        .question-box h2 {
+
+            font-size: 21px;
+
+            color: #1e293b;
+
+            line-height: 1.5;
+        }
+
+
+        /* OPTIONS */
+
+        .options {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 15px;
+        }
+
+        .option {
+
+            border: 2px solid #e2e8f0;
+
+            padding: 16px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            background: white;
+        }
+
+        .option:hover {
+
+            border-color: #60a5fa;
+
+            background: #eff6ff;
+        }
+
+        .option.selected {
+
+            border-color: #2563eb;
+
+            background: #dbeafe;
+
+            color: #1e40af;
+
+            font-weight: bold;
+        }
+
+
+        /* QUIZ BUTTONS */
+
+        .quiz-buttons {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-top: 30px;
+        }
+
+        #previousBtn {
+
+            background: #64748b;
+        }
+
+        #previousBtn:hover {
+
+            background: #475569;
+        }
+
+        #submitBtn {
+
+            background: #16a34a;
+
+            display: none;
+        }
+
+        #submitBtn:hover {
+
+            background: #15803d;
+        }
+
+
+        /* =================================================
+           RESULT
+        ================================================= */
+
+        .result-container {
+
+            max-width: 1000px;
+
+            margin: auto;
+
+            text-align: center;
+        }
+
+        .result-container > h1 {
+
+            font-size: 38px;
+
+            color: #1e3a8a;
+
+            margin-bottom: 10px;
+        }
+
+        .result-container > h2 {
+
+            margin-bottom: 35px;
+
+            color: #475569;
+        }
+
+
+        /* RESULT CARDS */
+
+        .result-cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 35px;
+        }
+
+        .result-card {
+
+            background: white;
+
+            padding: 25px 15px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.07);
+
+            transition: 0.3s;
+        }
+
+        .result-card:hover {
+
+            transform: translateY(-5px);
+        }
+
+        .result-card h3 {
+
+            font-size: 15px;
+
+            color: #64748b;
+
+            margin-bottom: 12px;
+        }
+
+        .result-card p {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            color: #2563eb;
+        }
+
+
+        /* =================================================
+           ANALYSIS
+        ================================================= */
+
+        .analysis {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 15px;
+
+            text-align: left;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.07);
+
+            margin-bottom: 25px;
+        }
+
+        .analysis h2 {
+
+            text-align: center;
+
+            color: #1e3a8a;
+
+            margin-bottom: 25px;
+        }
+
+        .analysis-item {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 15px 5px;
+
+            border-bottom:
+                1px solid #e5e7eb;
+        }
+
+        .analysis-item:last-child {
+
+            border-bottom: none;
+        }
+
+        .analysis-item strong {
+
+            color: #475569;
+        }
+
+        .analysis-item span {
+
+            color: #2563eb;
+
+            font-weight: bold;
+        }
+
+
+        /* =================================================
+           PERFORMANCE MESSAGE
+        ================================================= */
+
+        .performance-message {
+
+            background: #eff6ff;
+
+            padding: 30px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+        }
+
+        .performance-message h2 {
+
+            color: #1e3a8a;
+
+            margin-bottom: 10px;
+        }
+
+        .performance-message p {
+
+            color: #475569;
+
+            line-height: 1.6;
+        }
+
+
+        /* =================================================
+           RESULT BUTTONS
+        ================================================= */
+
+        .result-buttons {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 15px;
+        }
+
+
+        /* =================================================
+           FOOTER
+        ================================================= */
+
+        footer {
+
+            background: #1e3a8a;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 20px;
+
+            margin-top: 30px;
+        }
+
+        footer p {
+
+            font-size: 14px;
+        }
+
+
+        /* =================================================
+           RESPONSIVE
+        ================================================= */
+
+        @media (max-width: 800px) {
+
+            .header {
+
+                padding: 15px 5%;
+            }
+
+            .page {
+
+                padding: 40px 5%;
+            }
+
+            .welcome-box h1 {
+
+                font-size: 34px;
+            }
+
+            .result-cards {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 550px) {
+
+            .header {
+
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+            .header nav {
+
+                gap: 15px;
+            }
+
+            .page {
+
+                padding: 30px 15px;
+            }
+
+            .welcome-box h1 {
+
+                font-size: 28px;
+            }
+
+            .student-form {
+
+                padding: 25px 20px;
+            }
+
+            .quiz-container {
+
+                padding: 20px;
+            }
+
+            .quiz-header {
+
+                flex-direction: column;
+
+                gap: 15px;
+
+                align-items: flex-start;
+            }
+
+            .quiz-buttons {
+
+                flex-wrap: wrap;
+            }
+
+            .quiz-buttons button {
+
+                flex: 1;
+            }
+
+            .result-cards {
+
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-item {
+
+                flex-direction: column;
+
+                gap: 5px;
+            }
+
+            .result-buttons {
+
+                flex-direction: column;
+            }
+
+            .result-buttons button {
+
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================= -->
+
+    <header class="header">
+
+        <div class="logo">
+            Quiz<span>Analyzer</span>
+        </div>
+
+        <nav>
+
+            <a href="#home">
+                Home
+            </a>
+
+            <a href="#quiz">
+                Quiz
+            </a>
+
+            <a href="#result">
+                Performance
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =================================================
+         HOME PAGE
+    ================================================= -->
+
+    <section id="home" class="page active">
+
+        <div class="welcome-box">
+
+            <h1>
+                Quiz & Performance Analyzer
+            </h1>
+
+            <p>
+                Test your knowledge and analyze your performance.
+            </p>
+
+
+            <div class="student-form">
+
+                <h2>
+                    Student Details
+                </h2>
+
+
+                <input
+                    type="text"
+                    id="studentName"
+                    placeholder="Enter your name"
+                >
+
+
+                <input
+                    type="text"
+                    id="rollNumber"
+                    placeholder="Enter your roll number"
+                >
+
+
+                <select id="subject">
+
+                    <option value="">
+                        Select Subject
+                    </option>
+
+                    <option value="Web Development">
+                        Web Development
+                    </option>
+
+                    <option value="HTML">
+                        HTML
+                    </option>
+
+                    <option value="CSS">
+                        CSS
+                    </option>
+
+                    <option value="JavaScript">
+                        JavaScript
+                    </option>
+
+                    <option value="Computer Science">
+                        Computer Science
+                    </option>
+
+                </select>
+
+
+                <button onclick="startQuiz()">
+                    Start Quiz
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         QUIZ PAGE
+    ================================================= -->
+
+    <section id="quiz" class="page">
+
+        <div class="quiz-container">
+
+
+            <div class="quiz-header">
+
+                <h2 id="quizTitle">
+                    Quiz
+                </h2>
+
+                <div class="timer">
+
+                    Time Left:
+
+                    <span id="timer">
+                        60
+                    </span>
+
+                    seconds
+
+                </div>
+
+            </div>
+
+
+            <div class="question-info">
+
+                <span id="questionNumber">
+                    Question 1 of 10
+                </span>
+
+            </div>
+
+
+            <div class="question-box">
+
+                <h2 id="question">
+                    Question will appear here
+                </h2>
+
+            </div>
+
+
+            <div id="options" class="options">
+            </div>
+
+
+            <div class="quiz-buttons">
+
+                <button
+                    id="previousBtn"
+                    onclick="previousQuestion()"
+                >
+                    Previous
+                </button>
+
+
+                <button
+                    id="nextBtn"
+                    onclick="nextQuestion()"
+                >
+                    Next
+                </button>
+
+
+                <button
+                    id="submitBtn"
+                    onclick="submitQuiz()"
+                >
+                    Submit Quiz
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         RESULT PAGE
+    ================================================= -->
+
+    <section id="result" class="page">
+
+        <div class="result-container">
+
+
+            <h1>
+                Quiz Result
+            </h1>
+
+
+            <h2>
+
+                Congratulations,
+
+                <span id="resultName">
+                    Student
+                </span>
+
+            </h2>
+
+
+
+            <!-- RESULT CARDS -->
+
+            <div class="result-cards">
+
+
+                <div class="result-card">
+
+                    <h3>
+                        Total Score
+                    </h3>
+
+                    <p id="score">
+                        0 / 10
+                    </p>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <h3>
+                        Percentage
+                    </h3>
+
+                    <p id="percentage">
+                        0%
+                    </p>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <h3>
+                        Accuracy
+                    </h3>
+
+                    <p id="accuracy">
+                        0%
+                    </p>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <h3>
+                        Performance
+                    </h3>
+
+                    <p id="performance">
+                        -
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ANALYSIS -->
+
+            <div class="analysis">
+
+                <h2>
+                    Performance Analysis
+                </h2>
+
+
+                <div class="analysis-item">
+
+                    <strong>
+                        Correct Answers:
+                    </strong>
+
+                    <span id="correctAnswers">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="analysis-item">
+
+                    <strong>
+                        Wrong Answers:
+                    </strong>
+
+                    <span id="wrongAnswers">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="analysis-item">
+
+                    <strong>
+                        Unattempted:
+                    </strong>
+
+                    <span id="unattempted">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="analysis-item">
+
+                    <strong>
+                        Strong Area:
+                    </strong>
+
+                    <span id="strongArea">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="analysis-item">
+
+                    <strong>
+                        Weak Area:
+                    </strong>
+
+                    <span id="weakArea">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="analysis-item">
+
+                    <strong>
+                        Suggestion:
+                    </strong>
+
+                    <span id="suggestion">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PERFORMANCE MESSAGE -->
+
+            <div class="performance-message">
+
+                <h2 id="performanceTitle">
+                    Your Performance
+                </h2>
+
+                <p id="performanceMessage">
+
+                    Your performance analysis
+                    will appear here.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="result-buttons">
+
+                <button onclick="restartQuiz()">
+                    Retake Quiz
+                </button>
+
+                <button onclick="window.print()">
+                    Print Result
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================= -->
+
+    <footer>
+
+        <p>
+            © 2026 Quiz & Performance Analyzer
+        </p>
+
+    </footer>
+
+
+
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================= -->
+
+    <script>
+
+
+        /* ================================================
+           QUESTIONS
+        ================================================= */
+
+        const questions = [
+
+            {
+                question: "What does HTML stand for?",
+
+                options: [
+                    "Hyper Text Markup Language",
+                    "High Text Machine Language",
+                    "Hyperlink Text Management Language",
+                    "Home Tool Markup Language"
+                ],
+
+                answer: 0,
+
+                topic: "HTML"
+            },
+
+
+            {
+                question: "Which HTML tag is used to create a paragraph?",
+
+                options: [
+                    "<heading>",
+                    "<p>",
+                    "<paragraph>",
+                    "<text>"
+                ],
+
+                answer: 1,
+
+                topic: "HTML"
+            },
+
+
+            {
+                question: "Which property is used to change text color in CSS?",
+
+                options: [
+                    "font-color",
+                    "text-color",
+                    "color",
+                    "foreground"
+                ],
+
+                answer: 2,
+
+                topic: "CSS"
+            },
+
+
+            {
+                question: "Which CSS property is used to change the background color?",
+
+                options: [
+                    "background-color",
+                    "bg-color",
+                    "color-background",
+                    "background-style"
+                ],
+
+                answer: 0,
+
+                topic: "CSS"
+            },
+
+
+            {
+                question: "Which keyword is used to declare a variable in JavaScript?",
+
+                options: [
+                    "variable",
+                    "let",
+                    "define",
+                    "variableName"
+                ],
+
+                answer: 1,
+
+                topic: "JavaScript"
+            },
+
+
+            {
+                question: "Which symbol is used for a single-line comment in JavaScript?",
+
+                options: [
+                    "<!-- -->",
+                    "/* */",
+                    "//",
+                    "#"
+                ],
+
+                answer: 2,
+
+                topic: "JavaScript"
+            },
+
+
+            {
+                question: "Which method is used to display something in the browser console?",
+
+                options: [
+                    "console.log()",
+                    "print.console()",
+                    "display()",
+                    "console.show()"
+                ],
+
+                answer: 0,
+
+                topic: "JavaScript"
+            },
+
+
+            {
+                question: "Which of the following is a programming language?",
+
+                options: [
+                    "HTML",
+                    "CSS",
+                    "JavaScript",
+                    "HTTP"
+                ],
+
+                answer: 2,
+
+                topic: "Computer Science"
+            },
+
+
+            {
+                question: "What is the brain of a computer commonly called?",
+
+                options: [
+                    "RAM",
+                    "CPU",
+                    "Keyboard",
+                    "Monitor"
+                ],
+
+                answer: 1,
+
+                topic: "Computer Science"
+            },
+
+
+            {
+                question: "Which device is mainly used to enter text into a computer?",
+
+                options: [
+                    "Monitor",
+                    "Printer",
+                    "Keyboard",
+                    "Speaker"
+                ],
+
+                answer: 2,
+
+                topic: "Computer Science"
+            }
+
+        ];
+
+
+
+        /* ================================================
+           VARIABLES
+        ================================================= */
+
+        let currentQuestion = 0;
+
+        let userAnswers = [];
+
+        let timeLeft = 60;
+
+        let timerInterval;
+
+        let studentName = "";
+
+        let rollNumber = "";
+
+        let selectedSubject = "";
+
+
+
+        /* ================================================
+           ELEMENTS
+        ================================================= */
+
+        const homePage =
+            document.getElementById("home");
+
+        const quizPage =
+            document.getElementById("quiz");
+
+        const resultPage =
+            document.getElementById("result");
+
+        const questionElement =
+            document.getElementById("question");
+
+        const optionsElement =
+            document.getElementById("options");
+
+        const questionNumberElement =
+            document.getElementById("questionNumber");
+
+        const timerElement =
+            document.getElementById("timer");
+
+        const quizTitle =
+            document.getElementById("quizTitle");
+
+        const previousBtn =
+            document.getElementById("previousBtn");
+
+        const nextBtn =
+            document.getElementById("nextBtn");
+
+        const submitBtn =
+            document.getElementById("submitBtn");
+
+
+
+        /* ================================================
+           START QUIZ
+        ================================================= */
+
+        function startQuiz() {
+
+            studentName =
+                document.getElementById(
+                    "studentName"
+                ).value.trim();
+
+
+            rollNumber =
+                document.getElementById(
+                    "rollNumber"
+                ).value.trim();
+
+
+            selectedSubject =
+                document.getElementById(
+                    "subject"
+                ).value;
+
+
+            if (studentName === "") {
+
+                alert(
+                    "Please enter your name."
+                );
+
+                return;
+            }
+
+
+            if (rollNumber === "") {
+
+                alert(
+                    "Please enter your roll number."
+                );
+
+                return;
+            }
+
+
+            if (selectedSubject === "") {
+
+                alert(
+                    "Please select a subject."
+                );
+
+                return;
+            }
+
+
+            currentQuestion = 0;
+
+            userAnswers = [];
+
+            timeLeft = 60;
+
+
+            homePage.classList.remove(
+                "active"
+            );
+
+            resultPage.classList.remove(
+                "active"
+            );
+
+            quizPage.classList.add(
+                "active"
+            );
+
+
+            quizTitle.textContent =
+                selectedSubject + " Quiz";
+
+
+            displayQuestion();
+
+            startTimer();
+        }
+
+
+
+        /* ================================================
+           DISPLAY QUESTION
+        ================================================= */
+
+        function displayQuestion() {
+
+            const question =
+                questions[currentQuestion];
+
+
+            questionNumberElement.textContent =
+                `Question ${currentQuestion + 1} of ${questions.length}`;
+
+
+            questionElement.textContent =
+                question.question;
+
+
+            optionsElement.innerHTML = "";
+
+
+            question.options.forEach(
+                (option, index) => {
+
+                    const optionDiv =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    optionDiv.classList.add(
+                        "option"
+                    );
+
+
+                    optionDiv.textContent =
+                        option;
+
+
+                    optionDiv.onclick =
+                        function () {
+
+                            selectOption(index);
+
+                        };
+
+
+                    if (
+                        userAnswers[
+                            currentQuestion
+                        ] === index
+                    ) {
+
+                        optionDiv.classList.add(
+                            "selected"
+                        );
+
+                    }
+
+
+                    optionsElement.appendChild(
+                        optionDiv
+                    );
+
+                }
+            );
+
+
+            if (currentQuestion === 0) {
+
+                previousBtn.style.display =
+                    "none";
+
+            }
+
+            else {
+
+                previousBtn.style.display =
+                    "block";
+            }
+
+
+            if (
+                currentQuestion ===
+                questions.length - 1
+            ) {
+
+                nextBtn.style.display =
+                    "none";
+
+                submitBtn.style.display =
+                    "block";
+
+            }
+
+            else {
+
+                nextBtn.style.display =
+                    "block";
+
+                submitBtn.style.display =
+                    "none";
+
+            }
+
+        }
+
+
+
+        /* ================================================
+           SELECT OPTION
+        ================================================= */
+
+        function selectOption(index) {
+
+            userAnswers[
+                currentQuestion
+            ] = index;
+
+
+            const allOptions =
+                document.querySelectorAll(
+                    ".option"
+                );
+
+
+            allOptions.forEach(
+                (option, optionIndex) => {
+
+                    option.classList.remove(
+                        "selected"
+                    );
+
+
+                    if (
+                        optionIndex === index
+                    ) {
+
+                        option.classList.add(
+                            "selected"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+
+        /* ================================================
+           NEXT
+        ================================================= */
+
+        function nextQuestion() {
+
+            if (
+                currentQuestion <
+                questions.length - 1
+            ) {
+
+                currentQuestion++;
+
+                displayQuestion();
+
+            }
+
+        }
+
+
+
+        /* ================================================
+           PREVIOUS
+        ================================================= */
+
+        function previousQuestion() {
+
+            if (currentQuestion > 0) {
+
+                currentQuestion--;
+
+                displayQuestion();
+
+            }
+
+        }
+
+
+
+        /* ================================================
+           TIMER
+        ================================================= */
+
+        function startTimer() {
+
+            clearInterval(
+                timerInterval
+            );
+
+
+            timerElement.textContent =
+                timeLeft;
+
+
+            timerInterval =
+                setInterval(
+                    function () {
+
+                        timeLeft--;
+
+                        timerElement.textContent =
+                            timeLeft;
+
+
+                        if (
+                            timeLeft <= 0
+                        ) {
+
+                            clearInterval(
+                                timerInterval
+                            );
+
+
+                            alert(
+                                "Time is up! Your quiz will be submitted."
+                            );
+
+
+                            submitQuiz();
+
+                        }
+
+                    },
+                    1000
+                );
+
+        }
+
+
+
+        /* ================================================
+           SUBMIT QUIZ
+        ================================================= */
+
+        function submitQuiz() {
+
+            clearInterval(
+                timerInterval
+            );
+
+
+            let correct = 0;
+
+            let wrong = 0;
+
+            let unattempted = 0;
+
+
+            let topicStats = {
+
+                HTML: {
+                    correct: 0,
+                    total: 0
+                },
+
+                CSS: {
+                    correct: 0,
+                    total: 0
+                },
+
+                JavaScript: {
+                    correct: 0,
+                    total: 0
+                },
+
+                "Computer Science": {
+                    correct: 0,
+                    total: 0
+                }
+
+            };
+
+
+            questions.forEach(
+                (question, index) => {
+
+                    const userAnswer =
+                        userAnswers[index];
+
+
+                    if (
+                        topicStats[
+                            question.topic
+                        ]
+                    ) {
+
+                        topicStats[
+                            question.topic
+                        ].total++;
+
+                    }
+
+
+                    if (
+                        userAnswer === undefined
+                    ) {
+
+                        unattempted++;
+
+                        return;
+
+                    }
+
+
+                    if (
+                        userAnswer ===
+                        question.answer
+                    ) {
+
+                        correct++;
+
+
+                        topicStats[
+                            question.topic
+                        ].correct++;
+
+                    }
+
+                    else {
+
+                        wrong++;
+
+                    }
+
+                }
+            );
+
+
+            const totalQuestions =
+                questions.length;
+
+
+            const percentage =
+                Math.round(
+                    (correct /
+                        totalQuestions) *
+                    100
+                );
+
+
+            const attempted =
+                correct + wrong;
+
+
+            let accuracy = 0;
+
+
+            if (attempted > 0) {
+
+                accuracy =
+                    Math.round(
+                        (correct /
+                            attempted) *
+                        100
+                    );
+
+            }
+
+
+            let performance = "";
+
+            let suggestion = "";
+
+
+            if (percentage >= 90) {
+
+                performance =
+                    "Excellent";
+
+                suggestion =
+                    "Outstanding performance! Keep practicing to maintain this level.";
+
+            }
+
+            else if (percentage >= 75) {
+
+                performance =
+                    "Very Good";
+
+                suggestion =
+                    "Great work! Revise difficult topics and aim for an even higher score.";
+
+            }
+
+            else if (percentage >= 60) {
+
+                performance =
+                    "Good";
+
+                suggestion =
+                    "Good attempt. Focus more on the topics where you made mistakes.";
+
+            }
+
+            else if (percentage >= 40) {
+
+                performance =
+                    "Average";
+
+                suggestion =
+                    "You need more practice. Revise the concepts and attempt more quizzes.";
+
+            }
+
+            else {
+
+                performance =
+                    "Needs Improvement";
+
+                suggestion =
+                    "Start with the basic concepts and practice regularly.";
+
+            }
+
+
+            let strongestTopic = "-";
+
+            let weakestTopic = "-";
+
+            let highestPercentage = -1;
+
+            let lowestPercentage = 101;
+
+
+            Object.keys(topicStats)
+                .forEach(
+                    topic => {
+
+                        const stats =
+                            topicStats[topic];
+
+
+                        if (
+                            stats.total === 0
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const topicPercentage =
+                            Math.round(
+                                (stats.correct /
+                                    stats.total) *
+                                100
+                            );
+
+
+                        if (
+                            topicPercentage >
+                            highestPercentage
+                        ) {
+
+                            highestPercentage =
+                                topicPercentage;
+
+                            strongestTopic =
+                                `${topic} (${topicPercentage}%)`;
+
+                        }
+
+
+                        if (
+                            topicPercentage <
+                            lowestPercentage
+                        ) {
+
+                            lowestPercentage =
+                                topicPercentage;
+
+                            weakestTopic =
+                                `${topic} (${topicPercentage}%)`;
+
+                        }
+
+                    }
+                );
+
+
+            showResult(
+                correct,
+                wrong,
+                unattempted,
+                percentage,
+                accuracy,
+                performance,
+                strongestTopic,
+                weakestTopic,
+                suggestion
+            );
+
+        }
+
+
+
+        /* ================================================
+           SHOW RESULT
+        ================================================= */
+
+        function showResult(
+            correct,
+            wrong,
+            unattempted,
+            percentage,
+            accuracy,
+            performance,
+            strongestTopic,
+            weakestTopic,
+            suggestion
+        ) {
+
+
+            quizPage.classList.remove(
+                "active"
+            );
+
+            homePage.classList.remove(
+                "active"
+            );
+
+            resultPage.classList.add(
+                "active"
+            );
+
+
+            document.getElementById(
+                "resultName"
+            ).textContent =
+                studentName;
+
+
+            document.getElementById(
+                "score"
+            ).textContent =
+                `${correct} / ${questions.length}`;
+
+
+            document.getElementById(
+                "percentage"
+            ).textContent =
+                `${percentage}%`;
+
+
+            document.getElementById(
+                "accuracy"
+            ).textContent =
+                `${accuracy}%`;
+
+
+            document.getElementById(
+                "performance"
+            ).textContent =
+                performance;
+
+
+            document.getElementById(
+                "correctAnswers"
+            ).textContent =
+                correct;
+
+
+            document.getElementById(
+                "wrongAnswers"
+            ).textContent =
+                wrong;
+
+
+            document.getElementById(
+                "unattempted"
+            ).textContent =
+                unattempted;
+
+
+            document.getElementById(
+                "strongArea"
+            ).textContent =
+                strongestTopic;
+
+
+            document.getElementById(
+                "weakArea"
+            ).textContent =
+                weakestTopic;
+
+
+            document.getElementById(
+                "suggestion"
+            ).textContent =
+                suggestion;
+
+
+            document.getElementById(
+                "performanceTitle"
+            ).textContent =
+                performance;
+
+
+            document.getElementById(
+                "performanceMessage"
+            ).textContent =
+                `You scored ${correct} out of ${questions.length} questions with ${accuracy}% accuracy. ${suggestion}`;
+
+        }
+
+
+
+        /* ================================================
+           RESTART QUIZ
+        ================================================= */
+
+        function restartQuiz() {
+
+            clearInterval(
+                timerInterval
+            );
+
+
+            currentQuestion = 0;
+
+            userAnswers = [];
+
+            timeLeft = 60;
+
+
+            resultPage.classList.remove(
+                "active"
+            );
+
+            quizPage.classList.remove(
+                "active"
+            );
+
+            homePage.classList.add(
+                "active"
+            );
+
+
+            document.getElementById(
+                "studentName"
+            ).value = "";
+
+
+            document.getElementById(
+                "rollNumber"
+            ).value = "";
+
+
+            document.getElementById(
+                "subject"
+            ).value = "";
+
+        }
+
+
+
+        /* ================================================
+           NAVIGATION
+        ================================================= */
+
+        document
+            .querySelectorAll(
+                ".header nav a"
+            )
+            .forEach(
+                link => {
+
+                    link.addEventListener(
+                        "click",
+                        function(event) {
+
+                            event.preventDefault();
+
+
+                            const target =
+                                this.getAttribute(
+                                    "href"
+                                );
+
+
+                            if (
+                                target ===
+                                "#home"
+                            ) {
+
+                                quizPage
+                                    .classList
+                                    .remove(
+                                        "active"
+                                    );
+
+                                resultPage
+                                    .classList
+                                    .remove(
+                                        "active"
+                                    );
+
+                                homePage
+                                    .classList
+                                    .add(
+                                        "active"
+                                    );
+
+                            }
+
+
+                            else if (
+                                target ===
+                                "#quiz"
+                            ) {
+
+                                if (
+                                    studentName !==
+                                    ""
+                                ) {
+
+                                    homePage
+                                        .classList
+                                        .remove(
+                                            "active"
+                                        );
+
+                                    resultPage
+                                        .classList
+                                        .remove(
+                                            "active"
+                                        );
+
+                                    quizPage
+                                        .classList
+                                        .add(
+                                            "active"
+                                        );
+
+                                }
+
+                                else {
+
+                                    alert(
+                                        "Please start the quiz first."
+                                    );
+
+                                }
+
+                            }
+
+
+                            else if (
+                                target ===
+                                "#result"
+                            ) {
+
+                                if (
+                                    studentName !==
+                                    ""
+                                ) {
+
+                                    homePage
+                                        .classList
+                                        .remove(
+                                            "active"
+                                        );
+
+                                    quizPage
+                                        .classList
+                                        .remove(
+                                            "active"
+                                        );
+
+                                    resultPage
+                                        .classList
+                                        .add(
+                                            "active"
+                                        );
+
+                                }
+
+                                else {
+
+                                    alert(
+                                        "Please complete a quiz first."
+                                    );
+
+                                }
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+    </script>
+
+</body>
+</html>
